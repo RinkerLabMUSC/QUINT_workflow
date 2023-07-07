@@ -1,0 +1,71 @@
+---
+title: "introduction"
+author: "Thomas J. Wukitsch"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+The [QUINT: Workflow for Quantification and Spatial Analysis of Features in Histological Images From Rodent Brain](https://www.frontiersin.org/articles/10.3389/fninf.2019.00075/full), or just "QUINT Workflow," uses a variety of free software to perform cell counting and other artificial-vision-assisted-counting in histological images from rat and mouse brains. When combined with [DeepSlice](https://www.deepslice.com.au/), a deep learning algorithm trained to do much of the atlas alignment legwork for a given section/slice of tissue, the efficiency of this workflow is drastically increased. Together, this integrated workflow of DeepSlice --\> QUINT allows single individuals to segment and register cells to a brain atlas across whole brains of all animals from entire studies as opposed to the teams previously required. However, the outputs from the workflow need some cleaning and aggregating to become a workable dataset. QUINTegrate is designed to facilitate this process by automating a labor-intensive chunk of the final gap between QUINT Workflow outputs and analysis.
+
+The QUINT Workflow's outputs are hierarchies in HTML format which provide total object counts (cell counts usually) and areas for the lowest sub-divisions of each brain area for each individual's brain, but it does not sum them up into totals for the larger aggregated areas that these sub-substructures make up. Thus, you may want the cell count and total area of the Nucleus Accumbens, but your output will only show the counts and areas from the Nucleus Accumbens Core and Nucleus Accumbens Shell sub-structures. `QUINTegrate()`, the function for which the package is named, is designed to perform this summing of sub-structures for each parent structure across the entire AllenCCFv3 ontogeny in addition to appending all the individual-level data together into a single dataset. In addition, the QUINTegrate package also includes `dir.setup()`, a function that uses a vector of your animal IDs to automate the generation of each folder and sub-folder you will need for using the DeepSlice --\> QUINT Workflow, even if you have multiple fluorophores you need signal from.
+
+## QUINTegrate() Function Input Requirements
+
+-   Files must be the unaltered html outputs from Nutil.
+
+-   File names must be unique and should include the animal's unique identifier.
+
+    For best results, you can additionally include experimental group identifiers, fluorophore, and anything else you want. Be sure to delimit between each piece of information with underscores ('\_') for easy retrieval once you have your data set. This will become the value of the animalID column in the output data set for this individual.
+
+## QUINTegrate() Function Output Enhancements
+
+The basic HTML output of Nutil using the QUINT Workflow will have 10 columns of information:
+
+1.  Region ID
+
+2.  Region Name
+
+3.  Region pixels
+
+4.  Region area
+
+5.  Area unit (for region area)
+
+6.  Object count
+
+7.  Object pixels
+
+8.  Object area
+
+9.  Area unit (for object area)
+
+10. Load
+
+Often it is convenient to have additional information like relationships between areas in the hierarchy, common acronyms, etc. during analysis. The `QUINTegrate()` function adds the following columns of information from the Allen CCFv3 Ontogeny and other sources to the existing output from Nutil to improve compatibility with other functions you may use:
+
+1.  **acronym** - Allen's acronyms for all brain areas
+
+2.  **color.hex.triplet** - Hex value of colors associated with the brain areas for graphing and mapping purposes.
+
+3.  **depth** - Integers representing the depth of a given brain area in the hierarchy. With 1 as the highest parent structure in the hierarchy and 10 as the deepest depth of a sub-sub-sub-...structure child (e.g. the Rostrolateral lateral visual area layers)
+
+4.  **graph.order** - Integers specifying the order in which regions should appear on a graph which maintains the hierarchy by keeping parent brain areas before their child sub-structures. This is also the original ordering of brain structures in the Allen CCFv3 Ontogeny.
+
+5.  **parent.structure.id** - Integers identifying the parent structure of a given brain area using its CCFv3 ID number.
+
+6.  **safe.name** - Full area names without commas for ease of use with some functions
+
+7.  **structure.id.path** - The full address of a structure within the hierarchy with the Region ID for the current brain area last and each parent structure before that (and that structure's parent structure before that and so forth) up the hierarchy separated by '/'. The "root" structure (Region ID: 997) is the base of most brain structures and thus appears first in the address.

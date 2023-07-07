@@ -2,7 +2,7 @@ Package: QUINTegrate
 Title: QUINT Workflow Data Integration and Enhancement
 Version: 0.1.2.2
 Authors@R: 
-    person("Thomas", "Wukitsch", , "wukitsch@musc.edu", role = c("aut", "cre"),
+    person("Thomas", "Wukitsch", , "thomaswukitsch@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-8672-5915"))
 Description: Integrates datasets from the 'QUINT' workflow with additional details from the 'Allen CCFv3 Ontogeny'.
     The main function is to sum Object count, Object area, Object pixels, Region pixels and Region area according 
